@@ -1,9 +1,19 @@
 import express, { response } from 'express';
+import basicAuth from 'express-basic-auth';
 
 const app = express();
 const port = process.env.SERVER_POST;
 
-app.get('/', (request, response) => {
+app.use(basicAuth({
+    users: {
+        admin: 'admin',
+    },
+    challenge: true
+}))
+
+app.get('/:id', (request, response) => {
+    console.log(request.query);
+    console.log(request.params);
     response
         .type('html')
         .send('<h1>Hello World</h1>');
