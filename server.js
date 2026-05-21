@@ -53,13 +53,48 @@ app.get('/rotta-json', (request, response) => {
     });
 });
 
-// Esempio aggiuntivo: rotta con più campi JSON.
-// Mostra che possiamo restituire qualsiasi struttura di dati.
+// Dati condivisi tra le rotte degli utenti.
+// In un'app reale questi dati verrebbero letti da un database.
+const utenti = [
+    { id: 1, nome: 'Alice' },
+    { id: 2, nome: 'Bob' },
+    { id: 3, nome: 'Carlo' },
+];
+
+// Rotta GET /utenti — restituisce l'intero array.
 app.get('/utenti', (request, response) => {
-    response.json([
-        { id: 1, nome: 'Alice' },
-        { id: 2, nome: 'Bob' },
-    ]);
+    response.json(utenti);
+});
+
+// Rotta parametrica: il segmento ":id" è un segnaposto variabile.
+// Il valore passato nell'URL (es. /utenti/2) è accessibile tramite request.params.id.
+app.get('/utenti/:id', (request, response) => {
+    const id = Number(request.params.id);
+    const utente = utenti.find((u) => u.id === id);
+
+    // Se l'utente non esiste, rispondiamo con lo status 404.
+    if (!utente) {
+        return response.status(404).json({ errore: 'Utente non trovato' });
+    }
+
+    response.json(utente);
+});
+
+// Rotta con query string: i parametri dopo "?" sono accessibili tramite request.query.
+// Esempio: GET /cerca?nome=Alice → filtra gli utenti per nome.
+// Se il parametro "nome" non viene passato, restituisce tutti gli utenti.
+app.get('/cerca', (request, response) => {
+    const { nome } = request.query;
+
+    if (!nome) {
+        return response.json(utenti);
+    }
+
+    const risultati = utenti.filter((u) =>
+        u.nome.toLowerCase().includes(nome.toLowerCase())
+    );
+
+    response.json(risultati);
 });
 
 // --- AVVIO DEL SERVER ---

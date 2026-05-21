@@ -70,9 +70,32 @@ Una rotta definisce come il server risponde a una richiesta su un certo percorso
 |---|---|---|
 | `/` | HTML | Restituisce una pagina HTML |
 | `/rotta-json` | JSON | Restituisce un oggetto JSON |
-| `/utenti` | JSON | Restituisce un array di utenti |
+| `/utenti` | JSON | Restituisce tutti gli utenti |
+| `/utenti/:id` | JSON | Restituisce il singolo utente per ID |
+| `/cerca?nome=...` | JSON | Filtra gli utenti per nome |
 
 > `response.json(...)` è lo shortcut di `response.type('json').send(...)`.
+
+### Rotta parametrica
+Il segmento `:id` è un segnaposto variabile: il valore passato nell'URL viene letto tramite `request.params`.
+
+```
+GET /utenti/2
+             └── request.params.id → "2"
+```
+
+> Vedi `server.js` — rotta `/utenti/:id` con gestione del caso "non trovato" (status 404).
+
+### Query string
+I parametri dopo `?` nell'URL sono accessibili tramite `request.query`.
+Più parametri si separano con `&` (es. `?nome=Alice&città=Roma`).
+
+```
+GET /cerca?nome=Alice
+              └── request.query.nome → "Alice"
+```
+
+> Vedi `server.js` — rotta `/cerca` con filtro opzionale per nome.
 
 ---
 
