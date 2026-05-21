@@ -4,35 +4,26 @@ import basicAuth from 'express-basic-auth';
 const app = express();
 const port = process.env.SERVER_POST;
 
-app.use(basicAuth({
-    users: {
-        admin: 'admin',
-    },
-    challenge: true
-}))
+app.use(express.static('public1'));
+app.use(express.static('public2'));
 
-app.get('/:id', (request, response) => {
-    console.log(request.query);
-    console.log(request.params);
+app.get('/', (request, response) => {
     response
         .type('html')
-        .send('<h1>Hello World</h1>');
+        .send('<h1>Hello NodeJS</h1>');
         
 });
 
-app.get('/data-json1', (request, response) => {
-    response
-        .type('json')
-        .send({
-            messaggio: 'ciao son una stringa',
-            numero: 9,
-            abilitati: true
-        })
-});
-
-app.get('/data-json2', (request, response) => {
+app.get('/rotta-json', (request, response) => {
+    // Versione standard
+    // response
+    //    .type('json')
+    //    .send({
+    //        messaggio: 'Questo è un messaggio JSON',
+    //    });
+    // Shortcut
     response.json({
-        messaggio: 'Altro messaggio'
+        messaggio: 'Questo è un messaggio JSON'
     })
 });
 
