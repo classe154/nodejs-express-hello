@@ -68,13 +68,19 @@ app.get('/utenti', (request, response) => {
 
 // Rotta parametrica: il segmento ":id" è un segnaposto variabile.
 // Il valore passato nell'URL (es. /utenti/2) è accessibile tramite request.params.id.
+
+// http://localhost:9999/utenti/qualcosa
+
 app.get('/utenti/:id', (request, response) => {
     const id = Number(request.params.id);
     const utente = utenti.find((u) => u.id === id);
 
     // Se l'utente non esiste, rispondiamo con lo status 404.
     if (!utente) {
-        return response.status(404).json({ errore: 'Utente non trovato' });
+        response
+            .status(404)
+            .json({ errore: 'Utente non trovato' });
+        return;
     }
 
     response.json(utente);
@@ -87,14 +93,33 @@ app.get('/cerca', (request, response) => {
     const { nome } = request.query;
 
     if (!nome) {
-        return response.json(utenti);
+        response
+            .status(404)
+            .json({
+                results: [],
+                error: 'Parametro "nome" non corretto o non presente'
+            });
+        return;
     }
 
     const risultati = utenti.filter((u) =>
         u.nome.toLowerCase().includes(nome.toLowerCase())
     );
 
-    response.json(risultati);
+    if (risultati.length === 0) {
+        response
+            .status(404)
+            .json({
+                results: [],
+                error: 'Nessuno risultato trovato'
+            });
+        return;
+    }
+
+    response.json({
+        results: risultati,
+        error: null,
+    });
 });
 
 // --- AVVIO DEL SERVER ---
